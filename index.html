@@ -3,28 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Case Battle</title>
+    <title>Case Battle Mobile</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="site.webmanifest">
     <meta name="theme-color" content="#1a1a1a">
 </head>
 <body>
     <div class="container">
-        <h1>Case Battle</h1>
-        <div class="balance">Баланс: $<span id="balance">1000</span></div>
-        
-        <div class="case-container">
-            <div class="case" id="case">
-                <img src="https://via.placeholder.com/200x200" alt="Case" id="caseImage" loading="lazy">
+        <header>
+            <h1>🎮 Case Battle</h1>
+            <div class="balance">
+                💵 Баланс: $<span id="balance">1000</span>
+                <div class="price-label">- $100 за открытие</div>
             </div>
-            <button onclick="openCase()" id="openButton">Открыть за $100</button>
-        </div>
+        </header>
 
-        <div class="items-grid" id="itemsGrid"></div>
+        <main>
+            <div class="case-container">
+                <div class="case" id="case">
+                    <img src="./images/case.png" alt="Case" 
+                         id="caseImage" 
+                         loading="lazy"
+                         width="200"
+                         height="200">
+                </div>
+                <button id="openButton" class="open-btn">
+                    🔓 Открыть кейс
+                </button>
+            </div>
+
+            <div class="inventory">
+                <h2>🎒 Ваши предметы:</h2>
+                <div class="items-grid" id="itemsGrid"></div>
+            </div>
+        </main>
     </div>
 
-    <div class="mobile-overlay"></div>
     <script src="script.js"></script>
 </body>
 </html>
- 
