@@ -2,33 +2,35 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Case Spin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXTREME CASE BATTLE</title>
     <link rel="stylesheet" href="style.css">
-    <meta name="theme-color" content="#1a1a1a">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎰 Case Spin</h1>
             <div class="balance-box">
-                <div class="balance">
-                    💵 $<span id="balance">5000</span>
-                </div>
-                <button class="btn-small" onclick="toggleView()">
-                    🔄 <span id="viewToggle">Кейсы</span>
-                </button>
+                💵 Баланс: $<span id="balance">5000</span>
+                <button class="view-toggle" onclick="toggleView()"></button>
             </div>
         </header>
 
-        <!-- Анимационный слот -->
-        <div class="slot-machine">
-            <div class="slot-items" id="slotItems"></div>
-            <div class="slot-overlay"></div>
-        </div>
+        <main>
+            <!-- Секция кейсов -->
+            <section class="cases-section active">
+                <div class="case-grid" id="caseGrid"></div>
+            </section>
 
-        <!-- Секции остаются как прежде -->
-        ...
+            <!-- Секция инвентаря -->
+            <section class="inventory-section">
+                <div class="inventory-grid" id="inventoryGrid"></div>
+            </section>
+
+            <!-- Анимация вращения -->
+            <div class="spin-animation-box" id="spinBox">
+                <div class="spinning-item" id="spinningItem"></div>
+            </div>
+        </main>
     </div>
 
     <script src="script.js"></script>
