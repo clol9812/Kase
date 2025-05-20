@@ -3,35 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Case Market</title>
+    <title>Case Spin</title>
     <link rel="stylesheet" href="style.css">
     <meta name="theme-color" content="#1a1a1a">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>💰 Case Market</h1>
+            <h1>🎰 Case Spin</h1>
             <div class="balance-box">
                 <div class="balance">
-                    💵 Баланс: $<span id="balance">5000</span>
+                    💵 $<span id="balance">5000</span>
                 </div>
                 <button class="btn-small" onclick="toggleView()">
-                    🔄 Показать <span id="viewToggle">Кейсы</span>
+                    🔄 <span id="viewToggle">Кейсы</span>
                 </button>
             </div>
         </header>
 
-        <!-- Секция с кейсами -->
-        <section id="casesSection" class="active-view">
-            <h2>🎁 Доступные кейсы</h2>
-            <div class="cases-grid" id="casesGrid"></div>
-        </section>
+        <!-- Анимационный слот -->
+        <div class="slot-machine">
+            <div class="slot-items" id="slotItems"></div>
+            <div class="slot-overlay"></div>
+        </div>
 
-        <!-- Секция с инвентарем -->
-        <section id="inventorySection" class="inactive-view">
-            <h2>🎒 Ваш инвентарь (<span id="itemsCount">0</span>)</h2>
-            <div class="items-grid" id="itemsGrid"></div>
-        </section>
+        <!-- Секции остаются как прежде -->
+        ...
     </div>
 
     <script src="script.js"></script>
