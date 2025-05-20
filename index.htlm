@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Case Battle</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="theme-color" content="#1a1a1a">
+</head>
+<body>
+    <div class="container">
+        <h1>Case Battle</h1>
+        <div class="balance">Баланс: $<span id="balance">1000</span></div>
+        
+        <div class="case-container">
+            <div class="case" id="case">
+                <img src="https://via.placeholder.com/200x200" alt="Case" id="caseImage" loading="lazy">
+            </div>
+            <button onclick="openCase()" id="openButton">Открыть за $100</button>
+        </div>
+
+        <div class="items-grid" id="itemsGrid"></div>
+    </div>
+
+    <div class="mobile-overlay"></div>
+    <script src="script.js"></script>
+</body>
+</html>
