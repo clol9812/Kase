@@ -148,3 +148,4 @@ function showResult(item) {
 
 // Запуск
 document.addEventListener('DOMContentLoaded', init);
+ 
