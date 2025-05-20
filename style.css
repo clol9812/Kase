@@ -1,161 +1,124 @@
-:root {
-    --primary: #2ecc71;
-    --secondary: #27ae60;
-    --danger: #e74c3c;
-    --background: #2c3e50;
-    --text: #ecf0f1;
+// Дополняем объект Case
+const cases = [
+    {
+        id: 1,
+        name: "Обычный кейс",
+        price: 100,
+        image: "./images/case1.png",
+        items: [
+            // Добавляем поле animationImage для анимации
+            { name: "Пистолет", price: 50, rare: 1, 
+              image: "./images/pistol.png", 
+              animationImage: "./images/pistol_spin.gif" },
+            // ... остальные предметы
+        ]
+    },
+    // ... остальные кейсы
+];
+
+let isSpinning = false;
+let spinTimeout;
+
+async function openCase(caseId) {
+    if (isSpinning) return;
+    
+    const selectedCase = cases.find(c => c.id === caseId);
+    if (!selectedCase || balance < selectedCase.price) {
+        showError("Недостаточно средств!");
+        return;
+    }
+
+    isSpinning = true;
+    balance -= selectedCase.price;
+    updateBalance();
+
+    // Случайный предмет
+    const items = selectedCase.items;
+    const targetIndex = Math.floor(Math.random() * items.length);
+    const targetItem = items[targetIndex];
+
+    // Запуск анимации
+    await startSlotAnimation(items, targetIndex);
+    
+    // Показ результата
+    showResult(targetItem);
+    
+    // Добавление в инвентарь
+    inventory.push(targetItem);
+    updateInventory();
+    isSpinning = false;
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
+async function startSlotAnimation(items, targetIndex) {
+    const slot = document.getElementById('slotItems');
+    slot.innerHTML = '';
+    
+    // Создаем 20 клонов предметов для эффекта бесконечного вращения
+    const spinItems = [...items, ...items, ...items, ...items, ...items];
+    
+    spinItems.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'slot-item';
+        div.innerHTML = `
+            <img src="${item.animationImage || item.image}" 
+                 alt="${item.name}"
+                 class="${index === targetIndex ? 'target-item' : ''}">
+        `;
+        slot.appendChild(div);
+    });
+
+    // Начало анимации
+    slot.style.transition = 'none';
+    slot.style.transform = 'translateY(0)';
+    
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    // Запуск вращения
+    slot.style.transition = 'transform 3s cubic-bezier(0.25, 0.1, 0.25, 1)';
+    slot.style.transform = `translateY(-${(targetIndex + spinItems.length * 2) * 200}px)`;
+    
+    // Вибрация (для мобильных)
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    
+    return new Promise(resolve => {
+        slot.ontransitionend = () => resolve();
+    });
 }
 
-body {
-    font-family: 'Arial', sans-serif;
-    background: var(--background);
-    color: var(--text);
-    line-height: 1.6;
-    padding: 15px;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-header {
-    text-align: center;
-    padding: 20px 0;
-}
-
-h1 {
-    font-size: clamp(1.8rem, 6vw, 2.5rem);
-    margin-bottom: 15px;
-    color: var(--primary);
-}
-
-.balance-box {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 15px;
-    border-radius: 15px;
-    margin: 15px 0;
-}
-
-.balance {
-    font-size: clamp(1.5rem, 5vw, 2rem);
-    margin: 10px 0;
-}
-
-/* Секции */
-section {
-    display: none;
-    padding: 20px 0;
-}
-
-section.active-view {
-    display: block;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Кейсы */
-.cases-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
-}
-
-.case-card {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-    padding: 20px;
-    text-align: center;
-    transition: transform 0.3s ease;
-}
-
-.case-card:hover {
-    transform: scale(1.02);
-}
-
-.case-image {
-    width: 100%;
-    height: 200px;
-    object-fit: contain;
-    margin-bottom: 15px;
-}
-
-/* Инвентарь */
-.items-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
-    padding: 15px 0;
-}
-
-.item-card {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    padding: 15px;
-    position: relative;
-    overflow: hidden;
-}
-
-.item-image {
-    width: 100%;
-    height: 120px;
-    object-fit: contain;
-    margin-bottom: 10px;
-}
-
-.item-price {
-    color: var(--primary);
-    font-weight: bold;
-    margin: 10px 0;
-}
-
-/* Кнопки */
-.btn-small {
-    background: var(--secondary);
-    border: none;
-    padding: 8px 15px;
-    color: white;
-    border-radius: 20px;
-    cursor: pointer;
-    margin: 5px;
-    transition: filter 0.2s;
-}
-
-.btn-small:active {
-    filter: brightness(0.9);
-}
-
-.sell-btn {
-    background: var(--danger);
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-}
-
-/* Адаптив */
-@media (max-width: 768px) {
-    .cases-grid {
-        grid-template-columns: 1fr;
+function showResult(item) {
+    const slot = document.getElementById('slotItems');
+    slot.innerHTML = `
+        <div class="slot-item">
+            <img src="${item.image}" 
+                 alt="${item.name}"
+                 class="winning-animation"
+                 style="transform: scale(1.2)">
+        </div>
+    `;
+    
+    // Эффект конфетти
+    for(let i = 0; i < 50; i++) {
+        createConfetti();
     }
     
-    .case-image {
-        height: 150px;
-    }
+    // Всплывающее уведомление
+    const notification = document.createElement('div');
+    notification.className = 'win-notification';
+    notification.innerHTML = `
+        🎉 ${item.name} ($${item.price}) 🎉
+    `;
+    document.body.appendChild(notification);
     
-    .items-grid {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    }
+    setTimeout(() => notification.remove(), 3000);
 }
+
+// Эффект конфетти
+function createConfetti() {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + '%';
+    confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    document.body.appendChild(confetti);
+    
+    setTimeout(() => confetti.remove(), 3000);
+        }
