@@ -1,146 +1,152 @@
-const items = [
-    { 
-        name: 'Золотой нож', 
-        rare: 5, 
-        image: './images/knife.png'
+// Данные кейсов
+const cases = [
+    {
+        id: 1,
+        name: "Обычный кейс",
+        price: 100,
+        image: "./images/case1.png",
+        items: [
+            { name: "Пистолет", price: 50, rare: 1, image: "./images/pistol.png" },
+            { name: "Пиво", price: 30, rare: 1, image: "./images/beer.png" },
+            { name: "Флешка", price: 80, rare: 2, image: "./images/flashdrive.png" }
+        ]
     },
-    { 
-        name: 'Боевые перчатки', 
-        rare: 4, 
-        image: './images/gloves.png'
-    },
-    { 
-        name: 'AK-47 Огненная', 
-        rare: 3, 
-        image: './images/ak47.png'
-    },
-    { 
-        name: 'AWP Дракон', 
-        rare: 3, 
-        image: './images/awp.png'
-    },
-    { 
-        name: 'Пистолет Кобальт', 
-        rare: 2, 
-        image: './images/pistol.png'
-    },
-    { 
-        name: 'Glock Сумеречный', 
-        rare: 2, 
-        image: './images/glock.png'
-    },
-    { 
-        name: 'Секретный ключ', 
-        rare: 1, 
-        image: './images/key.png'
-    },
-    { 
-        name: 'Золотая флешка', 
-        rare: 1, 
-        image: './images/flashdrive.png'
+    {
+        id: 2,
+        name: "Премиум кейс",
+        price: 500,
+        image: "./images/case2.png",
+        items: [
+            { name: "Золотой нож", price: 2000, rare: 5, image: "./images/knife.png" },
+            { name: "Перчатки", price: 1500, rare: 4, image: "./images/gloves.png" },
+            { name: "AK-47", price: 800, rare: 3, image: "./images/ak47.png" }
+        ]
     }
 ];
 
-let balance = 1000;
-let isSpinning = false;
+// Данные игрока
+let balance = 5000;
+let inventory = [];
+let isProcessing = false;
 
-const getRandomItem = () => {
-    const chances = [5, 4, 3, 2, 1];
-    const weights = [2, 8, 15, 30, 45];
-    const total = weights.reduce((a, b) => a + b, 0);
-    const random = Math.random() * total;
+// Инициализация кейсов
+function initCases() {
+    const grid = document.getElementById('casesGrid');
+    grid.innerHTML = '';
     
-    let cumulative = 0;
-    for (let i = 0; i < weights.length; i++) {
-        cumulative += weights[i];
-        if (random <= cumulative) {
-            const filtered = items.filter(item => item.rare === chances[i]);
-            return filtered[Math.floor(Math.random() * filtered.length)];
-        }
+    cases.forEach(caseItem => {
+        const card = document.createElement('div');
+        card.className = 'case-card';
+        card.innerHTML = `
+            <img src="${caseItem.image}" alt="${caseItem.name}" class="case-image">
+            <h3>${caseItem.name}</h3>
+            <div class="item-price">Цена: $${caseItem.price}</div>
+            <button class="btn-small" onclick="openCase(${caseItem.id})">
+                🎁 Открыть за $${caseItem.price}
+            </button>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+// Открытие кейса
+function openCase(caseId) {
+    if (isProcessing) return;
+    
+    const selectedCase = cases.find(c => c.id === caseId);
+    if (!selectedCase || balance < selectedCase.price) {
+        alert('Недостаточно средств!');
+        return;
     }
-};
-
-const updateBalance = () => {
-    document.getElementById('balance').textContent = balance;
-};
-
-const animateCase = () => {
-    const caseElement = document.getElementById('case');
-    const button = document.getElementById('openButton');
     
-    caseElement.classList.add('spin-animation');
-    button.disabled = true;
-    button.innerHTML = '🌀 Открываем...';
-};
-
-const showPrize = (item) => {
-    const caseImage = document.getElementById('caseImage');
-    const button = document.getElementById('openButton');
-    
-    caseImage.src = item.image;
-    caseImage.style.transform = 'scale(1.1)';
-    button.innerHTML = '🎉 Открыто!';
-    
-    setTimeout(() => {
-        caseImage.style.transform = 'scale(1)';
-        button.innerHTML = '🔓 Открыть кейс';
-    }, 1000);
-};
-
-const addToInventory = (item) => {
-    const grid = document.getElementById('itemsGrid');
-    const card = document.createElement('div');
-    
-    card.className = `item-card rare-${item.rare}`;
-    card.innerHTML = `
-        <img src="${item.image}" 
-             alt="${item.name}" 
-             loading="lazy"
-             width="80"
-             height="80">
-        <div class="item-name">${item.name}</div>
-        <div class="item-rarity">${'★'.repeat(item.rare)}</div>
-    `;
-    
-    grid.prepend(card);
-};
-
-const openCase = () => {
-    if (isSpinning || balance < 100) return;
-    
-    isSpinning = true;
-    balance -= 100;
+    isProcessing = true;
+    balance -= selectedCase.price;
     updateBalance();
-    animateCase();
     
+    // Выбор случайного предмета
+    const randomItem = selectedCase.items[
+        Math.floor(Math.random() * selectedCase.items.length)
+    ];
+    
+    // Добавление в инвентарь
+    inventory.push(randomItem);
+    updateInventory();
+    
+    // Анимация
     setTimeout(() => {
-        const prize = getRandomItem();
-        isSpinning = false;
-        
-        document.getElementById('case').classList.remove('spin-animation');
-        document.getElementById('openButton').disabled = false;
-        
-        showPrize(prize);
-        addToInventory(prize);
-        
-        new Notification('Вы выиграли:', {
-            body: `${prize.name} (${prize.rare}★)`,
-            icon: prize.image
-        });
-    }, 2000);
-};
+        isProcessing = false;
+        alert(`Вы получили: ${randomItem.name} ($${randomItem.price})`);
+    }, 1000);
+}
 
-// Инициализация
-document.addEventListener('DOMContentLoaded', () => {
-    // Обработчики для мобильных устройств
-    const caseElement = document.getElementById('case');
-    caseElement.addEventListener('touchstart', openCase);
+// Продажа предмета
+function sellItem(index) {
+    if (isProcessing) return;
     
-    // Инициализация уведомлений
-    if (Notification.permission !== 'granted') {
-        Notification.requestPermission();
+    const item = inventory[index];
+    if (!item) return;
+    
+    if (confirm(`Продать ${item.name} за $${item.price}?`)) {
+        balance += item.price;
+        inventory.splice(index, 1);
+        updateBalance();
+        updateInventory();
     }
+}
+
+// Обновление интерфейса
+function updateBalance() {
+    document.getElementById('balance').textContent = balance;
+}
+
+function updateInventory() {
+    const grid = document.getElementById('itemsGrid');
+    grid.innerHTML = '';
     
-    // Первоначальная загрузка предметов
-    items.forEach(addToInventory);
+    inventory.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = `item-card rare-${item.rare}`;
+        card.innerHTML = `
+            <img src="${item.image}" alt="${item.name}" class="item-image">
+            <h4>${item.name}</h4>
+            <div class="item-price">Цена: $${item.price}</div>
+            <button class="sell-btn" onclick="sellItem(${index})">
+                💰 Продать
+            </button>
+        `;
+        grid.appendChild(card);
+    });
+    
+    document.getElementById('itemsCount').textContent = inventory.length;
+}
+
+// Переключение вида
+function toggleView() {
+    const casesSection = document.getElementById('casesSection');
+    const inventorySection = document.getElementById('inventorySection');
+    const toggleText = document.getElementById('viewToggle');
+    
+    if (casesSection.classList.contains('active-view')) {
+        casesSection.classList.remove('active-view');
+        inventorySection.classList.add('active-view');
+        toggleText.textContent = 'Кейсы';
+    } else {
+        inventorySection.classList.remove('active-view');
+        casesSection.classList.add('active-view');
+        toggleText.textContent = 'Инвентарь';
+    }
+}
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', () => {
+    initCases();
+    updateInventory();
+    
+    // Для мобильных устройств
+    document.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            btn.click();
+        });
+    });
 });
