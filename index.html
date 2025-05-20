@@ -3,22 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EXTREME CASE BATTLE</title>
+    <title>CASE BATTLE MOBILE</title>
     <link rel="stylesheet" href="style.css">
+    <meta name="theme-color" content="#1a1a1a">
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="balance-box">
-                💵 Баланс: $<span id="balance">5000</span>
-                <button class="view-toggle" onclick="toggleView()"></button>
+        <header class="header">
+            <h1 class="title">🎮 CASE BATTLE</h1>
+            <div class="balance-container">
+                <div class="balance">
+                    💵 $<span id="balance">5000</span>
+                </div>
+                <button class="view-toggle" onclick="toggleView()">
+                    <span id="viewToggle">Кейсы</span> 🔄
+                </button>
             </div>
         </header>
 
-        <main>
+        <main class="main-content">
             <!-- Секция кейсов -->
             <section class="cases-section active">
-                <div class="case-grid" id="caseGrid"></div>
+                <div class="cases-grid" id="caseGrid"></div>
             </section>
 
             <!-- Секция инвентаря -->
@@ -26,9 +32,9 @@
                 <div class="inventory-grid" id="inventoryGrid"></div>
             </section>
 
-            <!-- Анимация вращения -->
-            <div class="spin-animation-box" id="spinBox">
-                <div class="spinning-item" id="spinningItem"></div>
+            <!-- Прелоадер -->
+            <div class="preloader" id="preloader">
+                <div class="spinner"></div>
             </div>
         </main>
     </div>
@@ -36,4 +42,3 @@
     <script src="script.js"></script>
 </body>
 </html>
- 
